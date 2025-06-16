@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Enviar Mensajes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 30px; 
+            background: #fff;
+        }
+        form { 
+            margin-bottom: 20px; 
+        }
+        label { 
+            display: block; 
+            margin-top: 10px; 
+            font-size: 1rem;
+        }
+        select, input, textarea { 
+            width: 100%; 
+            padding: 12px; 
+            margin-top: 5px; 
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        #mensajes { 
+            border: 1px solid #ccc; 
+            padding: 18px; 
+            min-height: 60px; 
+            background: #fafafa; 
+            font-size: 1rem;
+        }
+        button { 
+            margin-top: 10px; 
+            padding: 12px 20px; 
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        h1, h2 {
+            font-size: 1.5rem;
+        }
+
+        .loader-overlay {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        background: rgba(255,255,255,0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999; /* Asegura que esté por encima de todo */
+        }
+
+        .loader {
+        border: 8px solid #f3f3f3;
+        border-top: 8px solid #6ca0dc;
+        border-radius: 50%;
+        width: 60px; height: 60px;
+        animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+        0% { transform: rotate(0deg);}
+        100% { transform: rotate(360deg);}
+        }
+
+        @media (max-width: 600px) {
+            body {
+                margin: 10px;
+            }
+            h1, h2 {
+                font-size: 1.25rem;
+            }
+            label {
+                font-size: 1.1rem;
+            }
+            select, input, textarea {
+                font-size: 1.1rem;
+                padding: 16px;
+            }
+            #mensajes {
+                font-size: 1.1rem;
+                padding: 22px;
+            }
+            button {
+                font-size: 1.1rem;
+                padding: 16px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>¡Comunicate con tus amigos!</h1>
+    <form id="form-mensaje">
+        <label for="usuario">Tu usuario:</label>
+        <input type="text" id="usuario" name="usuario" required>
+
+        <label for="destinatario">Enviar a:</label>
+        <select id="destinatario" name="destinatario" required>
+            <option value="">Selecciona un usuario</option>
+            <option value="Ana">Ana</option>
+            <option value="Luis">Luis</option>
+            <option value="Maria">Maria</option>
+            <option value="Pedro">Pedro</option>
+        </select>
+
+        <label for="mensaje">Mensaje:</label>
+        <textarea id="mensaje" name="mensaje" rows="4" required></textarea>
+
+        <button type="submit">Enviar mensaje</button>
+        <button type="button" id="actualizar">Actualizar bandeja de entrada</button>
+    </form>
+
+    <h2>Bandeja de entrada</h2>
+    <div id="mensajes">No tienes mensajes</div>
+
+    <!-- Loader Overlay -->
+    <div id="loader-overlay" class="loader-overlay" style="display: none;">
+        <div class="loader"></div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
