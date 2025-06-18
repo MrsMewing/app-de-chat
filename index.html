@@ -95,21 +95,15 @@
     <h1>¡Comunicate con tus amigos!</h1>
     <form id="form-mensaje">
         <label for="usuario">Tu usuario:</label>
-        <input type="text" id="usuario" name="usuario" required>
+        <h2 id="texto_nombre_usuario">No disponible</h2>
 
         <label for="destinatario">Enviar a:</label>
-        <select id="destinatario" name="destinatario" required>
-            <option value="">Selecciona un usuario</option>
-            <option value="Ana">Ana</option>
-            <option value="Luis">Luis</option>
-            <option value="Maria">Maria</option>
-            <option value="Pedro">Pedro</option>
-        </select>
+        <select id="destinatario" name="destinatario" required></select>
 
         <label for="mensaje">Mensaje:</label>
         <textarea id="mensaje" name="mensaje" rows="4" required></textarea>
 
-        <button type="submit">Enviar mensaje</button>
+        <button type="submit" id="enviar_mensaje">Enviar mensaje</button>
         <button type="button" id="actualizar">Actualizar bandeja de entrada</button>
     </form>
 

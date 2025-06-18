@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-
+from flask_cors import CORS
 usuarios = [
     { "nombre": "Juan", "bandeja_de_entrada": [] },
     { "nombre": "Ana", "bandeja_de_entrada": [] },
@@ -9,58 +9,67 @@ usuarios = [
 ]
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/autentificacion", methods=["POST"])
 def autentificar_usuario ():
     informacion = request.get_json()
 
-    usuario = informacion.usuario
+    usuario_nuevo = informacion["usuario"]
 
-    if usuario == " ": return jsonify({"respuesta": "El nombre no puede estar vacio", "error": True}), 400
+    if usuario_nuevo == " ": return jsonify({"respuesta": "El nombre no puede estar vacio", "error": True}), 400
 
     respuesta = {"mensaje": "No se encontro al usuario en la base de datos", "error": True}
     status_code = 404
 
-    for usuarios_verificados in usuario:
-        if usuarios_verificados["nombre"] == usuarios:
-            respuesta = {"respuesta": "El usuario existe en la base de datos :)", "error": False}
+    for usuarios_verificado in usuarios:
+        if usuarios_verificado["nombre"] == usuario_nuevo:
+            respuesta = {"respuesta": f"Estas verificado, bienvenido {usuario_nuevo}", "error": False}
             status_code = 200
             break
 
     return jsonify(respuesta), status_code
 
+@app.route("/obtener_usuarios", methods=["GET"])
+def devolver_usuarios():
+    return jsonify({"usuarios": usuarios, "error": False}), 200
+
 @app.route("/agregar_mensajes", methods=["POST"])
 def procesar_mensajes():
     datos = request.get_json()
 
-    origen, destino, mensaje = datos.origen, datos.destino, datos.mensaje
+    origen_mensaje, destino_mensaje, contenido_mensaje = datos["origen"], datos["destino"], datos["mensaje"]
 
-    #vefirica si ningun dato esta vacio, para procesarlo
-    if(origen and destino and mensaje):
-        respuesta = {"mensaje": f"No se encontro al usuario {destino}", "error": True}
-        status_code = 404
+    respuesta = {"mensaje": f"No se encontro al usuario {destino_mensaje}", "error": True}
+    status_code = 404
 
-        for usuario in usuarios:
-            if usuario["nombre"] == destino: 
-                usuario["bandeja_de_entrada"].append({"origen": origen, "mensaje": mensaje})
-                respuesta = {"respuesta": "Se envio correctamente el mensaje", "error": False}
-                status_code = 200
-                break
+    print(datos)
+    for usuario in usuarios:
+        if usuario["nombre"] == destino_mensaje: 
+            usuario["bandeja_de_entrada"].append({"origen": origen_mensaje, "mensaje": contenido_mensaje})
+            respuesta = {"respuesta": "Se envio correctamente el mensaje", "error": False}
+            status_code = 200
+            break
         
-        return jsonify(respuesta), status_code
+    return jsonify(respuesta), status_code
 
-    #devuelve un error si algun dato esta vacio
-    else: return jsonify({"mensaje": "Uno de los datos esta vacio, verifica y vuelve a enviar", "error": True}), 400
-
-@app.route("/obtener_mensajes", methos=["GET"])
+@app.route("/obtener_mensajes", methods=["GET"])
 def devolver_mensajes():
-    datos = request.get_json()
 
-    usuario = datos.usuario
+    usuario = request.args.get("nombre_usuario")
 
-    for usuarios_verificados in usuarios:
-        if usuarios_verificados["nombre"] == usuario:
-            return jsonify({"respuesta": usuarios_verificados["bandeja_de_entrada"]}), 200
+    respuesta = {"respuesta": "No se encontro al usuario ", "error": True}
+    status_code = 404
+
+    print(usuario)
+    for usuarios_verificado in usuarios:
+        if usuarios_verificado["nombre"] == usuario:
+            respuesta = {"respuesta": usuarios_verificado["bandeja_de_entrada"], "error": False}
+            status_code = 200
+            break
+
+    print(respuesta)
+    return jsonify(respuesta), status_code
 
 if __name__ == "__main__":
     app.run()

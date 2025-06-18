@@ -1,0 +1,6 @@
+crear una app de chat local con la que se puedan enviar mensajes con los usuarios 
+verificados 
+
+---------TAREAS PENDIENTES---------
+definir edpoints y como se van a enviar los mensajes a los usuarios
+
