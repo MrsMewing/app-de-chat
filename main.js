@@ -38,34 +38,11 @@ async function verificar_solicitud(solicitud) {
         if(!respuesta.ok) throw new Error(solicitud.status);
 
         const contenido = await respuesta.json();
-        return [contenido, null];
+        return [contenido.respuesta, null];
     }
     catch(error){
         return [null, error];
     }
-}
-
-async function mostrar_lista_de_usuarios(){
-    showLoader();
-
-    const [datos, error] = await verificar_solicitud(fetch(`http://127.0.0.1:5000/obtener_usuarios`));
-    const contenedor_opciones = document.getElementById("destinatario");
-
-    if(error){
-        alert(error);
-        hideLoader();
-        return null;
-    }
-
-    for (let usuario of datos.usuarios){
-        const opcion = document.createElement("option");
-        opcion.textContent = usuario.nombre;
-        opcion.value = usuario.nombre;
-
-        contenedor_opciones.appendChild(opcion);
-    }
-    console.log(contenedor_opciones)
-    hideLoader();
 }
 
 document.getElementById('form-mensaje').addEventListener('submit', function(e) {
@@ -74,7 +51,6 @@ document.getElementById('form-mensaje').addEventListener('submit', function(e) {
     const destinatario = document.getElementById('destinatario').value;
     const mensaje = document.getElementById('mensaje').value.trim();
 
-    console.log(destinatario)
     if (usuario != " " && destinatario != " " && mensaje != " ") {
         showLoader();
         verificar_solicitud(fetch(`http://127.0.0.1:5000/agregar_mensajes`, {
@@ -86,6 +62,7 @@ document.getElementById('form-mensaje').addEventListener('submit', function(e) {
         })).then(([respuesta, error]) => {
             if(error) throw new Error(error);
 
+            alert(respuesta);
 
         }).catch((error) => {
             alert(error)
@@ -112,14 +89,13 @@ document.getElementById('actualizar').addEventListener('click', () => {
     parametros.set("nombre_usuario", nombre_usuario);
 
     verificar_solicitud(fetch(`http://127.0.0.1:5000/obtener_mensajes?${parametros.toString()}`))
-    .then(([datos, error]) => {
+    .then(([respuesta, error]) => {
         if(error) throw new Error(error);
 
-        console.log(datos)
-        if (datos.respuesta.length === 0) {
+        if (respuesta.length === 0) {
             contenedor.textContent = 'No tienes mensajes';
         } else {
-            contenedor.innerHTML = datos.respuesta.map(
+            contenedor.innerHTML = respuesta.map(
                 m => `<strong>${m.origen}</strong> te dice: ${m.mensaje}`
             ).join('<hr>');
         }
@@ -139,10 +115,24 @@ function hideLoader() {
   document.getElementById('loader-overlay').style.display = 'none';
 }
 
-document.getElementById("destinatario").addEventListener("click", function(event){
-    event.preventDefault();
+document.getElementById("destinatario").addEventListener("focus", async () =>{
+    showLoader();
 
-    console.log("presionado")
+    const [usuarios, error] = await verificar_solicitud(fetch(`http://127.0.0.1:5000/obtener_usuarios`));
+    const contenedor_opciones = document.getElementById("destinatario");
+    contenedor_opciones.innerHTML = "";
+    if(error){
+        alert(error);
+        hideLoader();
+        return null;
+    }
 
-    mostrar_lista_de_usuarios();
+    for (let usuario of usuarios){
+        const opcion = document.createElement("option");
+        opcion.textContent = usuario.nombre;
+        opcion.value = usuario.nombre;
+
+        contenedor_opciones.appendChild(opcion);
+    }
+    hideLoader();
 })

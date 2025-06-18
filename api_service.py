@@ -32,7 +32,7 @@ def autentificar_usuario ():
 
 @app.route("/obtener_usuarios", methods=["GET"])
 def devolver_usuarios():
-    return jsonify({"usuarios": usuarios, "error": False}), 200
+    return jsonify({"respuesta": usuarios, "error": False}), 200
 
 @app.route("/agregar_mensajes", methods=["POST"])
 def procesar_mensajes():
@@ -43,7 +43,6 @@ def procesar_mensajes():
     respuesta = {"mensaje": f"No se encontro al usuario {destino_mensaje}", "error": True}
     status_code = 404
 
-    print(datos)
     for usuario in usuarios:
         if usuario["nombre"] == destino_mensaje: 
             usuario["bandeja_de_entrada"].append({"origen": origen_mensaje, "mensaje": contenido_mensaje})
@@ -68,7 +67,6 @@ def devolver_mensajes():
             status_code = 200
             break
 
-    print(respuesta)
     return jsonify(respuesta), status_code
 
 if __name__ == "__main__":
